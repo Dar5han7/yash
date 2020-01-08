@@ -8,7 +8,7 @@ from Connections.Moment.CCEndPlateSplice.ui_columnendplate import Ui_MainWindow
 from Connections.Moment.CCEndPlateSplice.ui_column_endplate_design_preference import *
 from Connections.Moment.CCEndPlateSplice.ui_design_summary import Ui_DesignReport
 # from Connections.Moment.CCEndPlateSplice.ui_plate import Ui_Plate
-# from Connections.Moment.CCEndPlateSplice.ui_stiffener import Ui_Stiffener
+from Connections.Moment.CCEndPlateSplice.ui_stiffener import ui_stiffener
 # from Connections.Moment.CCEndPlateSplice.ui_pitch import Ui_Pitch
 # from Connections.Moment.CCEndPlateSplice.ui_weld_details import Ui_Weld_Details
 from Connections.Moment.CCEndPlateSplice.svg_window import SvgWindow
@@ -243,6 +243,27 @@ class DesignPreference(QDialog):
         self.save_designPref_para()
         QCloseEvent.accept()
 
+class Stiffener(QDialog):
+    def __init__(self, parent=None):
+        QDialog.__init__(self, parent)
+        self.ui = ui_stiffener()
+        self.ui.setupUi(self)
+        self.maincontroller = parent
+        uiObj = self.maincontroller.designParameters()
+        resultObj_stiff = ccEndPlate
+
+        if uiObj["Member"]["Connectivity"] == "Flush":
+            self.ui.plateHeight.setText("Width (mm)")
+            # self.ui.widget.setPixmap(QtGui.QPixmap(":/newPrefix/images/flush_stiffener.png"))
+            self.ui.txt_stiffnrHeight.setText(str(resultObj_stiff['Stiffener']['Height']))
+            self.ui.txt_stiffnrWidth.setText(str(resultObj_stiff["Stiffener"]["Width"]))
+            self.ui.txt_stiffnrThickness.setText(str(resultObj_stiff["Stiffener"]["Thickness"]))
+            self.ui.txt_stiffnrMomentDemand.setText(str(resultObj_stiff['Stiffener']['Moment']))
+            self.ui.txt_stiffnrMomenCapacity.setText(str(resultObj_stiff['Stiffener']['MomentCapacity']))
+            self.ui.txt_stiffnrShearDemand.setText(str(resultObj_stiff['Stiffener']['MomentCapacity']))
+            self.ui.txt_stiffnrShearCapacity.setText(str(resultObj_stiff['Stiffener']['MomentCapacity']))
+            self.ui.txt_stiffnrNotchSize.setText(str(resultObj_stiff['Stiffener']['MomentCapacity']))
+
 
 class DesignReportDialog(QDialog):
     def __init__(self, parent=None):
@@ -419,7 +440,7 @@ class Maincontroller(QMainWindow):
         # self.ui.btn_plateDetail.clicked.connect(self.plate_details)
         # self.ui.btn_stiffnrDetail.clicked.connect(self.stiffener_details)
         # self.ui.btn_weldDetails.clicked.connect(self.weld_details)
-        #self.ui.btn_CreateDesign.clicked.connect(self.design_report)
+        self.ui.btn_CreateDesign.clicked.connect(self.design_report)
         self.ui.btn_SaveMessages.clicked.connect(self.save_log_messages)
 
         validator = QIntValidator()
@@ -452,6 +473,22 @@ class Maincontroller(QMainWindow):
         # self.disable_buttons()
 
     def on_change(self):
+        if self.ui.combo_connLoc.currentText() == "Flush":
+
+            self.ui.combo_weldSize_web.setCurrentIndex(1)
+            self.ui.combo_weldSize_flange.setCurrentIndex(1)
+            self.ui.combo_weldSize_flange.setDisabled(True)
+            self.ui.combo_weldSize_web.setDisabled(True)
+
+        else:
+
+            self.ui.combo_weldSize_web.setCurrentIndex(0)
+            self.ui.combo_weldSize_flange.setCurrentIndex(0)
+            self.ui.combo_weldSize_flange.setEnabled(True)
+            self.ui.combo_weldSize_web.setEnabled(True)
+        pass
+
+    def stiff_on_change(self):
         if self.ui.combo_weld_method.currentText() == "Groove Weld (CJP)":
 
             self.ui.combo_weldSize_web.setCurrentIndex(1)
@@ -980,7 +1017,7 @@ class Maincontroller(QMainWindow):
         stiffener_height = resultObj["Stiffener"]["Height"]
         self.ui.txt_stiffheight.setText(str(stiffener_height))
 
-        stiffener_width = resultObj["Stiffener"]["Width"]
+        stiffener_width = resultObj['Stiffener']['Width']
         self.ui.txt_stiffwidth.setText(str(stiffener_width))
 
         stiffener_thk = resultObj["Stiffener"]["Thickness"]
@@ -1024,7 +1061,7 @@ class Maincontroller(QMainWindow):
 
     def disable_buttons(self):
         self.ui.btn_CreateDesign.setEnabled(False)
-        # self.ui.btn_SaveMessages.setEnabled(False)
+        self.ui.btn_SaveMessages.setEnabled(False)
         # self.ui.btnFront.setEnabled(False)
         # self.ui.btnTop.setEnabled(False)
         # self.ui.btnSide.setEnabled(False)
@@ -1036,7 +1073,7 @@ class Maincontroller(QMainWindow):
         # self.ui.btn_stiffnrDetail.setEnabled(False)
         # self.ui.btn_weldDetails.setEnabled(False)
 
-        # self.ui.action_save_input.setEnabled(False)
+        self.ui.action_save_input.setEnabled(False)
         self.ui.actionCreate_design_report.setEnabled(False)
         # self.ui.actionSave_3D_model.setEnabled(False)
         # self.ui.actionSave_log_messages.setEnabled(False)

@@ -219,9 +219,9 @@ class ccEndPlate:
         # End plate detailing
     ###########################################################################################
         # end plate height
-        if uiObj["Member"]["Connectivity"] == "Extended both ways":
-            self.end_plate_height_min = self.column_d + 2 * self.weld_thickness_flange + 10
-        elif uiObj["Member"]["Connectivity"] == "Flush":
+        if uiObj["Member"]["Connectivity"] == "Flush":
+            self.end_plate_height_min = self.column_d + 2 * self.weld_thickness_flange + 30
+        elif uiObj["Member"]["Connectivity"] == "Extended both ways":
             self.end_plate_height_min = self.column_d + 4 * self.end_dist_provided + 2 * self.weld_thickness_flange
             self.end_plate_height_max = self.column_d + 4 * self.end_dist_max + 2 * self.weld_thickness_flange
 
@@ -397,60 +397,69 @@ class ccEndPlate:
         #########################################################################
          # Stiffener
         ########################################################################
-        self.shear_on_stiff = self.t_b1
-        self.moment_on_stiff = self.t_b1 * self.end_dist_provided
-        if uiObj['Weld']['Type'] == "Fillet":
-            if self.weld_thickness_flange <= 10:
-                self.n = 15
-            elif self.weld_thickness_flange >10 and self.weld_thickness_flange <= 14:
-                self.n = 20
-            elif self.weld_thickness_flange > 14:
-                self.n = 25
-        a = 196
-        b = -28 * self.n
-        c = self.n ** 2
-        d = -(self.t_b1 * self.end_dist_provided * 4 * self.gamma_m0 / self.column_fy)
+        if uiObj["Member"]["Connectivity"] == "Extended both ways":
+            self.shear_on_stiff = self.t_b1
+            self.moment_on_stiff = self.t_b1 * self.end_dist_provided
+            if uiObj['Weld']['Type'] == "Fillet":
+                if self.weld_thickness_flange <= 10:
+                    self.n = 15
+                elif self.weld_thickness_flange >10 and self.weld_thickness_flange <= 14:
+                    self.n = 20
+                elif self.weld_thickness_flange > 14:
+                    self.n = 25
+            a = 196
+            b = -28 * self.n
+            c = self.n ** 2
+            d = -(self.t_b1 * self.end_dist_provided * 4 * self.gamma_m0 / self.column_fy)
 
-        coeff = [a, b, c, d]
+            coeff = [a, b, c, d]
 
-        self.t_s = np.roots(coeff)
-        # for i in range(len(ans)):
-        #     if np.isreal(ans[i]):
-        #         t_s = (np.real(ans[i]))
-        self.t_s = np.amax(self.t_s)
+            self.t_s = np.roots(coeff)
+            # for i in range(len(ans)):
+            #     if np.isreal(ans[i]):
+            #         t_s = (np.real(ans[i]))
+            self.t_s = math.ceil(np.amax(self.t_s))
 
-        self.h_s = 14 * self.t_s
-        if self.h_s < 100:
-            design_status = False
-            logger.warning(": Stiffener height is not sufficient for the practical purpose")
-            logger.info(": Re-design the connection by increasing the thickness of the stiffener")
+            if self.t_s < 6:
+                self.t_s = 6
+            else:
+                self.t_s = self.t_s
 
-        self.extension = self.column_d - self.end_plate_height
-        if self.extension < 50:
-            self.stiffener_width = 50
-        else:
-            self.stiffener_width = self.extension
+            self.h_s = math.ceil(14 * self.t_s)
+            if self.h_s < 100:
+                design_status = False
+                logger.warning(": Stiffener height is not sufficient for the practical purpose")
+                logger.info(": Re-design the connection by increasing the thickness of the stiffener")
 
-        self.stiff_moment = self.t_b1 * self.end_dist_min
-        self.stiff_moment_capacity = ((self.t_s * (14 * self.t_s - self.n)**2) / 4) * (self.column_fy/self.gamma_m0)
+            if uiObj["Member"]["Connectivity"] == "Extended both ways":
+                self.extension = self.end_plate_height - self.column_d
+                if self.extension < 50:
+                    self.stiffener_width = 50
+                else:
+                    self.stiffener_width = math.ceil(self.extension)
+            # else:
+            #     pass
 
-        if self.stiff_moment > self.stiff_moment_capacity:
-            design_status = False
-            logger.error(": Moment due to stiffener is greater than the stiffener moment capacity ")
-            logger.info(": Re-design the connection by reducing diameter of bolt or using the higher section")
+            self.stiff_moment = self.t_b1 * self.end_dist_min
+            self.stiff_moment_capacity = ((self.t_s * (14 * self.t_s - self.n)**2) / 4) * (self.column_fy/self.gamma_m0)
 
-        self.stiff_shear = self.t_b1
-        self.stiff_shear_capacity = self.t_s * (self.h_s - self.n) * (self.column_fy / self.gamma_m0)
+            if self.stiff_moment > self.stiff_moment_capacity:
+                design_status = False
+                logger.error(": Moment due to stiffener is greater than the stiffener moment capacity ")
+                logger.info(": Re-design the connection by reducing diameter of bolt or using the higher section")
 
-        if self.stiff_shear > self.stiff_shear_capacity:
-            design_status = False
-            logger.error(": The shear force due to stiffener is greater than the stiffener's shear capacity ")
-            logger.info(": Re-design the connection by reducing diameter of bolt or using the higher section")
+            self.stiff_shear = self.t_b1
+            self.stiff_shear_capacity = self.t_s * (self.h_s - self.n) * (self.column_fy / self.gamma_m0)
 
-        if self.t_s < 6:
-            design_status = False
-            logger.error(": The minimum thickness of stiffener required is 6mm")
-            logger.info(": Re-design the connection by increasing the thickness of stiffener")
+            if self.stiff_shear > self.stiff_shear_capacity:
+                design_status = False
+                logger.error(": The shear force due to stiffener is greater than the stiffener's shear capacity ")
+                logger.info(": Re-design the connection by reducing diameter of bolt or using the higher section")
+
+            if self.t_s < 6:
+                design_status = False
+                logger.error(": The minimum thickness of stiffener required is 6mm")
+                logger.info(": Re-design the connection by increasing the thickness of stiffener")
 
         ###########################################################################
         # End of calculation, sample output dictionary

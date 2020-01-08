@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1422</width>
-    <height>769</height>
+    <height>770</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -3752,7 +3752,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>202</x>
-       <y>561</y>
+       <y>510</y>
        <width>100</width>
        <height>25</height>
       </rect>
@@ -3771,7 +3771,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>-1</x>
-       <y>540</y>
+       <y>480</y>
        <width>130</width>
        <height>25</height>
       </rect>
@@ -3789,7 +3789,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>624</y>
+       <y>610</y>
        <width>200</width>
        <height>30</height>
       </rect>
@@ -3808,7 +3808,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>660</y>
+       <y>646</y>
        <width>200</width>
        <height>30</height>
       </rect>
@@ -3953,7 +3953,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>-1</x>
-       <y>430</y>
+       <y>440</y>
        <width>130</width>
        <height>25</height>
       </rect>
@@ -4154,140 +4154,11 @@ QMenu::item:selected {
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLabel" name="label_199">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>450</y>
-       <width>141</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Stiffener Height (mm)</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="txt_stiffwidth">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>480</y>
-       <width>100</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="txt_stiffheight">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>450</y>
-       <width>100</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_200">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>480</y>
-       <width>179</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Stiffener Width (mm)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="txt_stiffthickness">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>510</y>
-       <width>100</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_201">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>510</y>
-       <width>179</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Stiffener Thickness (mm)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_weld_size_3">
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>560</y>
+       <y>509</y>
        <width>131</width>
        <height>25</height>
       </rect>
@@ -4307,7 +4178,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>590</y>
+       <y>539</y>
        <width>131</width>
        <height>25</height>
       </rect>
@@ -4327,7 +4198,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>202</x>
-       <y>590</y>
+       <y>539</y>
        <width>100</width>
        <height>25</height>
       </rect>
@@ -4339,6 +4210,25 @@ QMenu::item:selected {
       </font>
      </property>
      <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_Stiffener_details">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>440</y>
+       <width>101</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Save log messages</string>
+     </property>
+     <property name="text">
+      <string>Details</string>
+     </property>
+     <property name="autoDefault">
       <bool>true</bool>
      </property>
     </widget>
@@ -4373,15 +4263,10 @@ QMenu::item:selected {
     <zorder>label_181</zorder>
     <zorder>label_182</zorder>
     <zorder>txt_platewidth</zorder>
-    <zorder>label_199</zorder>
-    <zorder>txt_stiffwidth</zorder>
-    <zorder>txt_stiffheight</zorder>
-    <zorder>label_200</zorder>
-    <zorder>txt_stiffthickness</zorder>
-    <zorder>label_201</zorder>
     <zorder>label_weld_size_3</zorder>
     <zorder>label_weld_size_4</zorder>
     <zorder>txt_weldsize_2</zorder>
+    <zorder>btn_Stiffener_details</zorder>
    </widget>
   </widget>
   <action name="actionInput">
