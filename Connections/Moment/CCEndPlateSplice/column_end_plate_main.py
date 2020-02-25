@@ -250,19 +250,19 @@ class Stiffener(QDialog):
         self.ui.setupUi(self)
         self.maincontroller = parent
         uiObj = self.maincontroller.designParameters()
-        resultObj_stiff = ccEndPlate
+        resultObj_stiff = ccEndPlate.ccEndPlateSplice(self,uiObj)
 
-        if uiObj["Member"]["Connectivity"] == "Flush":
-            self.ui.plateHeight.setText("Width (mm)")
+        if uiObj["Member"]["Connectivity"] != "Flush":
+            # self.ui.plateHeight.setText("Width (mm)")
             # self.ui.widget.setPixmap(QtGui.QPixmap(":/newPrefix/images/flush_stiffener.png"))
             self.ui.txt_stiffnrHeight.setText(str(resultObj_stiff['Stiffener']['Height']))
             self.ui.txt_stiffnrWidth.setText(str(resultObj_stiff["Stiffener"]["Width"]))
             self.ui.txt_stiffnrThickness.setText(str(resultObj_stiff["Stiffener"]["Thickness"]))
             self.ui.txt_stiffnrMomentDemand.setText(str(resultObj_stiff['Stiffener']['Moment']))
             self.ui.txt_stiffnrMomenCapacity.setText(str(resultObj_stiff['Stiffener']['MomentCapacity']))
-            self.ui.txt_stiffnrShearDemand.setText(str(resultObj_stiff['Stiffener']['MomentCapacity']))
-            self.ui.txt_stiffnrShearCapacity.setText(str(resultObj_stiff['Stiffener']['MomentCapacity']))
-            self.ui.txt_stiffnrNotchSize.setText(str(resultObj_stiff['Stiffener']['MomentCapacity']))
+            self.ui.txt_stiffnrShearDemand.setText(str(resultObj_stiff['Stiffener']['ShearForce']))
+            self.ui.txt_stiffnrShearCapacity.setText(str(resultObj_stiff['Stiffener']['ShearForceCapity']))
+            self.ui.txt_stiffnrNotchSize.setText(str(resultObj_stiff['Stiffener']['NotchSize']))
 
 
 class DesignReportDialog(QDialog):
@@ -357,6 +357,7 @@ class Maincontroller(QMainWindow):
         self.get_columndata()
         self.result_obj = None
         self.ui.combo_weld_method.currentTextChanged.connect(self.on_change)
+        self.ui.combo_connLoc.currentTextChanged.connect(self.stiff_on_change)
 
         self.designPrefDialog = DesignPreference(self)
         # self.ui.combo_connLoc.model().item(1).setEnabled(False)
@@ -438,7 +439,7 @@ class Maincontroller(QMainWindow):
 
         # self.ui.btn_pitchDetail.clicked.connect(self.pitch_details)
         # self.ui.btn_plateDetail.clicked.connect(self.plate_details)
-        # self.ui.btn_stiffnrDetail.clicked.connect(self.stiffener_details)
+        self.ui.btn_Stiffener_details.clicked.connect(self.stiffener_details)
         # self.ui.btn_weldDetails.clicked.connect(self.weld_details)
         self.ui.btn_CreateDesign.clicked.connect(self.design_report)
         self.ui.btn_SaveMessages.clicked.connect(self.save_log_messages)
@@ -473,7 +474,7 @@ class Maincontroller(QMainWindow):
         # self.disable_buttons()
 
     def on_change(self):
-        if self.ui.combo_connLoc.currentText() == "Flush":
+        if self.ui.combo_connLoc.currentText() == "Groove Weld (CJP)":
 
             self.ui.combo_weldSize_web.setCurrentIndex(1)
             self.ui.combo_weldSize_flange.setCurrentIndex(1)
@@ -489,20 +490,16 @@ class Maincontroller(QMainWindow):
         pass
 
     def stiff_on_change(self):
-        if self.ui.combo_weld_method.currentText() == "Groove Weld (CJP)":
+        if self.ui.combo_weld_method.currentText() == "Flush":
 
-            self.ui.combo_weldSize_web.setCurrentIndex(1)
-            self.ui.combo_weldSize_flange.setCurrentIndex(1)
-            self.ui.combo_weldSize_flange.setDisabled(True)
-            self.ui.combo_weldSize_web.setDisabled(True)
+            # self.ui.btn_Stiffener_details.setCurrentIndex(1)
+            self.ui.btn_Stiffener_details.setDisabled(True)
 
         else:
 
-            self.ui.combo_weldSize_web.setCurrentIndex(0)
-            self.ui.combo_weldSize_flange.setCurrentIndex(0)
-            self.ui.combo_weldSize_flange.setEnabled(True)
-            self.ui.combo_weldSize_web.setEnabled(True)
-        pass
+            # self.ui.btn_Stiffener_details.setCurrentIndex(0)
+            self.ui.btn_Stiffener_details.setEnabled(True)
+
 
     # def init_display(self, backend_str=None, size=(1024, 768)):
     #
@@ -780,8 +777,8 @@ class Maincontroller(QMainWindow):
             self.ui.combo_bolt_type.setCurrentIndex(self.ui.combo_bolt_type.findText(uiObj["Bolt"]["Type"]))
             self.ui.combo_bolt_grade.setCurrentIndex(self.ui.combo_bolt_grade.findText(uiObj["Bolt"]["Grade"]))
             self.ui.combo_plateThick.setCurrentIndex(self.ui.combo_plateThick.findText(uiObj["Plate"]["Thickness (mm)"]))
-            # self.ui.txt_plateHeight.setText(str(uiObj["Plate"]["Height (mm)"]))
-            # self.ui.txt_plateWidth.setText(str(uiObj["Plate"]["Width (mm)"]))
+            self.ui.txt_plate_height.setText(str(uiObj["Plate"]["Height"]))
+            self.ui.txt_plate_width.setText(str(uiObj["Plate"]["Width"]))
             self.ui.combo_weld_method.setCurrentIndex(self.ui.combo_weld_method.findText(uiObj["Weld"]["Type"]))
 
             self.ui.combo_weldSize_flange.setCurrentIndex(self.ui.combo_weldSize_flange.findText(uiObj["Weld"]["Flange (mm)"]))
@@ -952,7 +949,7 @@ class Maincontroller(QMainWindow):
             else:
                 # self.ui.btn_pitchDetail.setDisabled(False)
                 # self.ui.btn_plateDetail.setDisabled(False)
-                # self.ui.btn_stiffnrDetail.setDisabled(False)
+                self.ui.btn_Stiffener_details.setDisabled(False)
                 self.ui.chkBx_connector.setDisabled(True)
                 self.ui.chkBx_columnSec.setDisabled(True)
                 self.ui.chkBx_model.setDisabled(True)
@@ -1014,14 +1011,14 @@ class Maincontroller(QMainWindow):
         plate_thickness = resultObj["Plate"]["Thickness"]
         self.ui.txt_platethickness.setText(str(plate_thickness))
 
-        stiffener_height = resultObj["Stiffener"]["Height"]
-        self.ui.txt_stiffheight.setText(str(stiffener_height))
-
-        stiffener_width = resultObj['Stiffener']['Width']
-        self.ui.txt_stiffwidth.setText(str(stiffener_width))
-
-        stiffener_thk = resultObj["Stiffener"]["Thickness"]
-        self.ui.txt_stiffthickness.setText(str(stiffener_thk))
+        # stiffener_height = resultObj["Stiffener"]["Height"]
+        # self.ui.txt_stiffheight.setText(str(stiffener_height))
+        #
+        # stiffener_width = resultObj['Stiffener']['Width']
+        # self.ui.txt_stiffwidth.setText(str(stiffener_width))
+        #
+        # stiffener_thk = resultObj["Stiffener"]["Thickness"]
+        # self.ui.txt_stiffthickness.setText(str(stiffener_thk))
 
         weld_web = resultObj["Weld"]["Web"]
         self.ui.txt_weldsize_web.setText(str(weld_web))
@@ -1070,7 +1067,7 @@ class Maincontroller(QMainWindow):
         self.ui.chkBx_connector.setEnabled(False)
         # self.ui.btn_pitchDetail.setEnabled(False)
         # self.ui.btn_plateDetail.setEnabled(False)
-        # self.ui.btn_stiffnrDetail.setEnabled(False)
+        self.ui.btn_Stiffener_details.setEnabled(False)
         # self.ui.btn_weldDetails.setEnabled(False)
 
         self.ui.action_save_input.setEnabled(False)
@@ -1094,7 +1091,7 @@ class Maincontroller(QMainWindow):
         self.ui.chkBx_connector.setEnabled(True)
         # self.ui.btn_pitchDetail.setEnabled(True)
         # self.ui.btn_plateDetail.setEnabled(True)
-        # self.ui.btn_stiffnrDetail.setEnabled(True)
+        self.ui.btn_Stiffener_details.setEnabled(True)
         # self.ui.btn_weldDetails.setEnabled(True)
 
         # self.ui.action_save_input.setEnabled(True)
@@ -1156,7 +1153,7 @@ class Maincontroller(QMainWindow):
 
         # self.ui.btn_pitchDetail.setDisabled(True)
         # self.ui.btn_plateDetail.setDisabled(True)
-        # self.ui.btn_stiffnrDetail.setDisabled(True)
+        self.ui.btn_Stiffener_details.setDisabled(True)
         # self.ui.btn_weldDetails.setDisabled(True)
 
         self.display.EraseAll()
@@ -1381,10 +1378,10 @@ class Maincontroller(QMainWindow):
     # def plate_details(self):
     #     section = PlateDetails(self)
     #     section.show()
-    #
-    # def stiffener_details(self):
-    #     section = Stiffener(self)
-    #     section.show()
+
+    def stiffener_details(self):
+        section = Stiffener(self)
+        section.show()
     #
     # def weld_details(self):
     #     section = Weld_Details(self)

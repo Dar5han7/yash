@@ -84,10 +84,10 @@ class ccEndPlate:
 
         self.dia_hole = self.bolt_dia + int(uiObj["bolt"]["bolt_hole_clrnce"])
 
-        if self.connectivity == "Extended both ways":
-            self.endplate_type = "Extended both ways"
-        else:
-            self.endplate_type = "Flush"
+        # if self.connectivity == "Extended both ways":
+        #     self.endplate_type = "Extended both ways"
+        # else:
+        #     self.endplate_type = "Flush"
 
         self.end_plate_thickness = [float(uiObj['Plate']['Thickness (mm)']),float(uiObj['Plate']['Thickness (mm)'])]
 
@@ -107,14 +107,17 @@ class ccEndPlate:
         self.end_plate_fu = float(uiObj['Member']['fu (MPa)'])
         self.end_plate_fy = float(uiObj['Member']['fy (MPa)'])
 
+        self.weld_thickness_flange = 0
+        self.weld_thickness_web = 0
         self.weld_type = str(uiObj["Weld"]["Type"])  # This is - Fillet weld or Groove weld
         self.weld_method = (uiObj["weld"]["typeof_weld"])
         if self.weld_type == "Fillet":
             self.weld_thickness_flange = float(uiObj['Weld']['Flange (mm)'])
             self.weld_thickness_web = float(uiObj['Weld']['Web (mm)'])
         else:
-            self.weld_thickness_flange = 0
-            self.weld_thickness_web = 0
+            pass
+            # self.weld_thickness_flange = 0
+            # self.weld_thickness_web = 0
 
         if uiObj["detailing"]["typeof_edge"] == "Sheared or hand flame cut":
             self.edge_type = 'hand_flame_cut'
@@ -423,7 +426,8 @@ class ccEndPlate:
             if self.t_s < 6:
                 self.t_s = 6
             else:
-                self.t_s = self.t_s
+                self.t_s = math.ceil(self.t_s)
+                # if self.t_s
 
             self.h_s = math.ceil(14 * self.t_s)
             if self.h_s < 100:
@@ -501,14 +505,16 @@ class ccEndPlate:
         outputobj['Plate']['MomentCapacity'] = float(round(self.m_dp,3))
 
         # #############   Stiffener    ##################
-        outputobj['Stiffener']['ShearForce'] = float(round(self.stiff_shear,3))
-        outputobj['Stiffener']['Moment'] = float(round(self.stiff_moment,3))
-        outputobj['Stiffener']['ShearForceCapity'] = float(round(self.stiff_shear_capacity,3))
-        outputobj['Stiffener']['MomentCapacity'] = float(round(self.stiff_moment_capacity,3))
-        outputobj['Stiffener']['Height'] = float(round(self.h_s,3))
-        outputobj['Stiffener']['Width'] = float(round(self.stiffener_width,3))
-        outputobj['Stiffener']['Thickness'] = float(round(self.t_s,3))
-        outputobj['Stiffener']['NotchSize'] = float(round(self.n,3))
+        if uiObj["Member"]["Connectivity"] != "Flush":
+
+            outputobj['Stiffener']['ShearForce'] = float(round(self.stiff_shear,3))
+            outputobj['Stiffener']['Moment'] = float(round(self.stiff_moment,3))
+            outputobj['Stiffener']['ShearForceCapity'] = float(round(self.stiff_shear_capacity,3))
+            outputobj['Stiffener']['MomentCapacity'] = float(round(self.stiff_moment_capacity,3))
+            outputobj['Stiffener']['Height'] = float(round(self.h_s,3))
+            outputobj['Stiffener']['Width'] = float(round(self.stiffener_width,3))
+            outputobj['Stiffener']['Thickness'] = float(round(self.t_s,3))
+            outputobj['Stiffener']['NotchSize'] = float(round(self.n,3))
 
         ################ Weld  ########################
         outputobj["Weld"]["Web"] = 0

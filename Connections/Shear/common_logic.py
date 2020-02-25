@@ -7,7 +7,8 @@ Created on 18-Nov-2016
 import os
 
 import math
-from OCC.Core.BRepPrimAPI import BRepPrimAPI_MakeSphere
+from OCC.Core.BRep import *
+# from OCC.Core.BRep import BRepPrimAPI_MakeSphere
 
 from Connections.Shear.Finplate.colWebBeamWebConnectivity import ColWebBeamWeb as finColWebBeamWeb
 from Connections.Shear.Endplate.colWebBeamWebConnectivity import ColWebBeamWeb as endColWebBeamWeb
